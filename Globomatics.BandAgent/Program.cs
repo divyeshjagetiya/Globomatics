@@ -12,9 +12,25 @@ namespace Globomatics.BandAgent
 {
     public class Program
     {
-        static void  Main(string[] args)
+        /// <summary>
+        /// For Connecting a particular device we required connecting string of that device, which we can get from Azure -> IoT Hub Name -> Device 01 -> "Connecting String"  
+        /// </summary>
+        private const string DeviceConnectionString = "HostName=DIoTDemo.azure-devices.net;DeviceId=device-01;SharedAccessKey=NuuXlJYWG8nkbg4j4Xzm0x1GzKPYeGd90JB/XaEwX2o=";
+        static async Task Main(string[] args)
         {
-             Console.WriteLine("Hello..");
+
+            Console.WriteLine("Initializing Band Agent ...");
+            //DeviceClient will help us to creating a new client using given connecting string.  So lest create client.
+            var device = DeviceClient.CreateFromConnectionString(DeviceConnectionString);
+            //We have created our client now it's time to connect with the hub. So OpenAsync will help us to connect with HUB.
+            await device.OpenAsync();
+            Console.WriteLine("Device is Connected!");
+
+            Console.WriteLine("Press Key to exit..");
+            Console.ReadKey();
+
+
+
         }
     }
 }
