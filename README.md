@@ -24,4 +24,3 @@ b) git push -u origin Development
 <br/>iothub-explorer create new-device --connection-string
 <br/>iothub-explorer delete existing-device
 #
-5) 

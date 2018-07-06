@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Devices.Client;
+using Newtonsoft.Json;
 
 namespace Globomatics.BandAgent
 {
@@ -27,12 +28,24 @@ namespace Globomatics.BandAgent
             Console.WriteLine("Device is Connected!");
             //Our Device is connected now let's put our data into the cloud 
             // Obviously we will not write while(true) in production side, this will be just testing purpose
+
+            var count = 1;
             while (true)
             {
-                //For Sending a message to cloud we have to Create instance of Message class which is provided by IoT hub.
-                //Message need payload(i.e input) but that payload shoud be in Array of bytes not a string. So we have to convert string into Array of bytes.
-                //So lets first convert string into Array of bytes and then we will give that varibale as input of Message.
-                var stringToArrayBytes = Encoding.ASCII.GetBytes("Hello from Band Agent");
+                // There is one problem that in reallity we are not sending message. We are sending an Object. So lets create one class which has "Message" and "StatusCode as a property"
+                //We have created Telemetry.cs 
+
+                var telemetry = new Telemetry
+                {
+                    Message = "Sending Conplex Object..",
+                    StatusCode = count++
+                };
+                // We can't send telemetry directly to cloud. For that we have to Serialize. So lets convert into Json
+                var telemetryJson = JsonConvert.SerializeObject(telemetry);
+                //For Sending a object to cloud we have to Create instance of Message class which is provided by IoT hub.
+                //Message need payload(i.e input) but that payload shoud be in Array of bytes not a string. So we have to convert object into Array of bytes.
+                //So lets first convert object into Array of bytes and then we will give that varibale as input of Message.
+                var stringToArrayBytes = Encoding.ASCII.GetBytes(telemetryJson);
                 var message = new Message(stringToArrayBytes);
                 
                 //Its time to send a message to cloud.
@@ -45,8 +58,7 @@ namespace Globomatics.BandAgent
                 //Open Ternimal (lets say CMD1) : write => iothub -explorer monitor-events --login "Azure IoT Hub Connection String"
                 //Now run the Globomatics.BandAgent Solution, We can see that from Device Application we are sending messages and in CMD1 we are receiving that means in IoT Hub.
 
-                // There is one problem that in reallity we are not sending message. We are sending an Object. So lets create one class which has "Message" and "StatusCode as a property"
-                //We have created Telemetry.cs 
+                
             }
             Console.WriteLine("Press Key to exit..");
             Console.ReadKey();
