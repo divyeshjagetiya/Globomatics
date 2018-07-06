@@ -43,8 +43,10 @@ namespace Globomatics.BandAgent
                 Thread.Sleep(2000);
                 //We can now send a simple message from our Device to Hub. 
                 //Open Ternimal (lets say CMD1) : write => iothub -explorer monitor-events --login "Azure IoT Hub Connection String"
-                //Now run the Globomatics.BandAgent Solution, We can see that from Device we are sending messages and in CMD1 we are receiving.
+                //Now run the Globomatics.BandAgent Solution, We can see that from Device Application we are sending messages and in CMD1 we are receiving that means in IoT Hub.
 
+                // There is one problem that in reallity we are not sending message. We are sending an Object. So lets create one class which has "Message" and "StatusCode as a property"
+                //We have created Telemetry.cs 
             }
             Console.WriteLine("Press Key to exit..");
             Console.ReadKey();
