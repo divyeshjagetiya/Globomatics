@@ -1,4 +1,4 @@
-﻿
+
 1) Create Console application in which install Microsoft.Device.Client nuget package.
 
 2) Download IoTHub Explorer from "https://github.com/Azure/iothub-explorer/releases" or Write in Terminal "npm install -g iothub-explorer"
