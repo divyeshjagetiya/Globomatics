@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Globomatics.MessageProcessor
 {
-    //All processor has to be implimented IEventProcessor
+    //All processor has to be impliment IEventProcessor
     public class LoginEventProcessor : IEventProcessor
     {
         /// <summary>
