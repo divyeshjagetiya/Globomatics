@@ -27,6 +27,10 @@ namespace Globomatics.BandAgent
             var device = DeviceClient.CreateFromConnectionString(DeviceConnectionString);
             //We have created our client now it's time to connect with the hub. So OpenAsync will help us to connect with HUB.
             await device.OpenAsync();
+
+            //Suppose if we want to send message to our iOt Device then Device should be always in receving mode so we can get notification from IOT Hub
+            var receiveEventsTask = ReveiveEvents(device);
+
             Console.WriteLine("Device is Connected!");
             //Our Device is connected now let's put our data into the cloud 
             // Obviously we will not write while(true) in production side, this will be just testing purpose
@@ -88,6 +92,32 @@ namespace Globomatics.BandAgent
             }
         }
 
+        private static async Task ReveiveEvents(DeviceClient device)
+        {
+            //We have to notification from IOT hub so loop should be in alert mode everytime
+            while(true)
+            {
+                //ReceiveAsync will help to receive message whenever we will get any message from hub.
+                var message = await device.ReceiveAsync();
+                if(message == null)
+                {
+                    continue;
+                }
+                //If we didn't get any message then it will continue but suppose if we got then we have display that message as of now.
+                var messageBody = message.GetBytes();
+
+                //The message will be in bytes of array so we need to convert that into string 
+                var payload = Encoding.ASCII.GetString(messageBody);
+                Console.WriteLine($"Receive message from cloud: '{payload}'");
+
+                //Once we received message then we have to inform to IoT Hub that we received message from your side.
+                //Here we are using AMQT in which we can send 3feedback like 1) Message Accepted 2) Message Rejected 3) Message Abandon (it will send again and again message until we accept or reject)
+                //Suppose we failed to process sucessfuly then we have to Reject the message using "device.RejectAsync(message)"
+                //But here we are accepting the message.
+                await device.CompleteAsync(message);
+            }
+        }
+
         private static async Task UpdateTwin(DeviceClient device)
         {
             //TwinProperties will ussed for the generating new property for the device
@@ -100,3 +130,4 @@ namespace Globomatics.BandAgent
         }
     }
 }
+ 
