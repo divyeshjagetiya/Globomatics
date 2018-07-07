@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Azure.EventHubs.Processor" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Globomatics.Common\Globomatics.Common.csproj" />
+  </ItemGroup>
+
 </Project>

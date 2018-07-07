@@ -1,5 +1,7 @@
-﻿using Microsoft.Azure.EventHubs;
+﻿using Globomatics.Common;
+using Microsoft.Azure.EventHubs;
 using Microsoft.Azure.EventHubs.Processor;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -63,10 +65,24 @@ namespace Globomatics.MessageProcessor
                 //We can get the other imformation from the event from System Properties
                 var deviceId = eventData.SystemProperties["iothub-connection-device-id"];
                 Console.WriteLine($"Message received on Partition '{context.PartitionId}' ,"+ $" DeviceId: '{deviceId}'" + $" Payload: {payload}");
+
+                var telemetry = JsonConvert.DeserializeObject<Telemetry>(payload);
+
+                if(telemetry.Status == StatusType.Emergency)
+                {
+                    Console.WriteLine($"Guest requires emergency assistance! Device ID: {deviceId}");
+                    SendFirstRespondersTo(telemetry.Latitute, telemetry.Longitude);
+                }
             }
 
             // Now whenever we get data we have to give a checkpoint to that blob so that it should not process old messages.
             return context.CheckpointAsync();
+        }
+
+        private void SendFirstRespondersTo(decimal latitute, decimal longitude)
+        {
+            //In a real app , This is where we would send a command or notification!
+            Console.WriteLine($"**First responders dispatched to ({latitute},{longitude})!");
         }
     }
 }

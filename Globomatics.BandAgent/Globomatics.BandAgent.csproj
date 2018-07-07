@@ -13,4 +13,8 @@
     <PackageReference Include="Microsoft.Azure.Devices.Client" Version="1.17.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Globomatics.Common\Globomatics.Common.csproj" />
+  </ItemGroup>
+
 </Project>
