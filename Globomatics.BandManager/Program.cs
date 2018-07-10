@@ -23,8 +23,27 @@ namespace Globomatics.BandManager
                 Console.Write("> ");
                 var deviceId = Console.ReadLine();
 
-                await SendCloudToDeviceMessage(serviceClient, deviceId);
+                //await SendCloudToDeviceMessage(serviceClient, deviceId);
+                //Commented above line of code because instead of sending message we will invoke a new method.
+                await CallDirectMethod(serviceClient, deviceId);
             }
+        }
+
+        private static async Task CallDirectMethod(ServiceClient serviceClient, string deviceId)
+        {
+            //To invoke a method, we first need to create an instance of the CloudToDeviceMethod
+            var method = new CloudToDeviceMethod("showMessage");
+
+            //Here we have showMessage method in our Globomatics.BandAgent project. We are that method. 
+            //But that method needs Payload which should be in JSON expression so lets create that as well.
+            //For Json expression : eg. 'Hello' :- Single quotes around the string
+            method.SetPayloadJson("'Hello from Divyesh BandManager'");
+
+            var response = await serviceClient.InvokeDeviceMethodAsync(deviceId, method);
+
+            //Our response object cotains both the status and the payload
+            Console.WriteLine($"Response status: {response.Status}, payload: {response.GetPayloadAsJson()}");
+
         }
 
         private static async Task SendCloudToDeviceMessage(ServiceClient serviceClient, string deviceId)
