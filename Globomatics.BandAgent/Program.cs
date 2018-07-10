@@ -31,6 +31,11 @@ namespace Globomatics.BandAgent
             //Suppose if we want to send message to our iOt Device then Device should be always in receving mode so we can get notification from IOT Hub
             var receiveEventsTask = ReveiveEvents(device);
 
+            //Suppose if we send a message from cloud to device with Method name and the method is not present then 
+            //it will send null as a response but we can set default method.
+            await device.SetMethodDefaultHandlerAsync(OtherDeviceMethod, null);
+
+            // And if we have a method then we can call directly.
             //Insted of Cloud to device messaging we can also use Direct method which will call Directly to perticular method.
             //It will used for if we are sending a message to Device then will get conformation message again
             await device.SetMethodHandlerAsync("showMessage", ShowMessage, null);
@@ -94,6 +99,19 @@ namespace Globomatics.BandAgent
                 Console.WriteLine("Message send to IoT hub!");
 
             }
+        }
+
+        private static Task<MethodResponse> OtherDeviceMethod(MethodRequest methodRequest, object userContext)
+        {
+            //this method will help if we are sending a message from cloud to device with method but if method is
+            //not present then we will execute this one.
+            Console.WriteLine("***Other Device Method Called***");
+            Console.WriteLine($"Method: {methodRequest.Name}");
+            Console.WriteLine($"Payload: {methodRequest.DataAsJson}");
+
+            var responsePayload = Encoding.ASCII.GetBytes("{\"response\": \"This method is not implemented!\"}");
+
+            return Task.FromResult(new MethodResponse(responsePayload, 404));
         }
 
         private static async Task ReveiveEvents(DeviceClient device)
