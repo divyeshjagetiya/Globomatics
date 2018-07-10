@@ -31,6 +31,10 @@ namespace Globomatics.BandAgent
             //Suppose if we want to send message to our iOt Device then Device should be always in receving mode so we can get notification from IOT Hub
             var receiveEventsTask = ReveiveEvents(device);
 
+            //Insted of Cloud to device messaging we can also use Direct method which will call Directly to perticular method.
+            //It will used for if we are sending a message to Device then will get conformation message again
+            await device.SetMethodHandlerAsync("showMessage", ShowMessage, null);
+
             Console.WriteLine("Device is Connected!");
             //Our Device is connected now let's put our data into the cloud 
             // Obviously we will not write while(true) in production side, this will be just testing purpose
@@ -127,6 +131,21 @@ namespace Globomatics.BandAgent
             twinProperties["connectionStrength"] = "full";
 
             await device.UpdateReportedPropertiesAsync(twinProperties);
+        }
+
+        private static Task<MethodResponse> ShowMessage(MethodRequest methodRequest , object userContext)
+        {
+            //If we were writing this to run on real hardware, we'd take the payload and use it to call some API that
+            //would show the message on our dand's display. But since we aren't running on real hardware, we'll just log
+            //the payload to the console.That payload is available both as bytes, and available as JSON data in this DataAsJson property.
+            Console.WriteLine("***Message Received***");
+            Console.WriteLine(methodRequest.DataAsJson);
+
+            //We still need to reply back to the colud. Let's first make a new response payload, which is a JSON object
+            //containing whaterver we want. For the sake of simplicity, we'll just hand back a simple string message.
+
+            var responsePayload = Encoding.ASCII.GetBytes("{\"response\": \"Message shown!\"}");
+            return Task.FromResult(new MethodResponse(responsePayload, 200));
         }
     }
 }
