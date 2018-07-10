@@ -42,7 +42,6 @@ namespace Globomatics.BandAgent
 
             Console.WriteLine("Device is Connected!");
             //Our Device is connected now let's put our data into the cloud 
-            // Obviously we will not write while(true) in production side, this will be just testing purpose
 
             await UpdateTwin(device);
 
